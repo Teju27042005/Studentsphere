@@ -18,6 +18,7 @@ export const Dashboard: React.FC = () => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [studentCount, setStudentCount] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -29,7 +30,14 @@ export const Dashboard: React.FC = () => {
   }, [messages]);
 
   useEffect(() => {
-    db.getUserProfile().then(setProfile);
+    const loadData = async () => {
+      const userProfile = await db.getUserProfile();
+      setProfile(userProfile);
+      
+      const students = await db.getStudents();
+      setStudentCount(students.length);
+    };
+    loadData();
   }, []);
 
   const handleSend = async () => {
@@ -71,7 +79,7 @@ export const Dashboard: React.FC = () => {
         {/* Quick Stats */}
         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
           <h3 className="text-slate-500 text-sm font-medium uppercase tracking-wider">Total Students</h3>
-          <p className="mt-2 text-2xl font-semibold text-slate-800">4</p>
+          <p className="mt-2 text-2xl font-semibold text-slate-800">{studentCount}</p>
           <p className="text-sm text-green-500 mt-1">Electronics & Comm.</p>
         </div>
         <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
